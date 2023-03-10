@@ -1,35 +1,40 @@
+import React from 'react';
 import { Card } from './components/Card'
 import { Header } from './components/Header'
 import { Drawer } from './components/Drawer'
 
-const arr = [
-  {
-    name: 'Мужские Кроссовки Nike Blazer Mid Suede',
-    price: 12999,
-    image: '/images/sneakers/1.jpg'
-  },
-  {
-    name: 'Мужские Кроссовки Nike Air Max 270',
-    price: 12999,
-    image: '/images/sneakers/2.jpg'
-  },
-  {
-    name: 'Мужские Кроссовки Nike Blazer Mid Suede',
-    price: 8499,
-    image: '/images/sneakers/3.jpg'
-  },
-  {
-    name: 'Кроссовки Puma X Aka Boku Future Rider',
-    price: 8999,
-    image: '/images/sneakers/4.jpg'
-  },
-];
 
 function App() {
+  const [items, setItems] = React.useState([])
+  const [cartItems, setCartItems] = React.useState([])
+  const [cartOpened, setCartOpened] = React.useState(false)
+
+  React.useEffect(() => {
+    fetch('https://6409cbc1d16b1f3ed6dd2e0a.mockapi.io/items')
+      .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        setItems(res);
+      })
+  }, [])
+
+  const cartStatus = () => {
+    setCartOpened(!cartOpened)
+  }
+
+  const addToCart = (obj) => {
+    setCartItems(prev => [...prev, obj])
+  }
+
+  const removeFromCart = (obj) => {
+    setCartItems(cartItems.filter(prev => prev != obj))
+  }
+
   return (
     <div className="wrapper clear">
-      <Drawer />
-      <Header />
+      {cartOpened && <Drawer items={cartItems} cartMove={cartStatus} />}
+      <Header cartMove={cartStatus} />
       <div className="content p-40">
         <div className="d-flex justify-between align-center mb-40">
           <h1>Все кроссовки</h1>
@@ -38,12 +43,15 @@ function App() {
             <input placeholder="Поиск..." type="text" />
           </div>
         </div>
-        <div className="sneakers d-flex justify-center">
-          {arr.map((obj) => (
+        <div className="sneakers d-flex justify-center flex-wrap">
+          {items.map((item) => (
             <Card
-              title={obj.name}
-              price={obj.price}
-              image={obj.image}
+              title={item.name}
+              price={item.price}
+              image={item.image}
+              onFavorite={() => console.log('Добавлено в закладки')}
+              onPlus={(obj) => addToCart(obj)}
+              removeObj={(obj) => removeFromCart(obj)}
             />
           ))}
         </div>
