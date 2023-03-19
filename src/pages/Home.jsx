@@ -1,6 +1,31 @@
+import React from 'react'
 import { Card } from '../components/Card'
 
-export function Home({ items, searchValue, setSearchValue, onChangeInput, addToFavorites, addToCart }) {
+
+export function Home({
+    items,
+    searchValue,
+    setSearchValue,
+    onChangeInput,
+    addToFavorites,
+    addToCart,
+    isLoading
+}) {
+
+    const renderItems = () => {
+        const filtredItems = items.filter((item) =>
+            item.name.toLowerCase().includes(searchValue.toLowerCase()),
+        );
+        return (isLoading ? [...Array(12)] : filtredItems).map((item, index) => (
+            <Card
+                key={index}
+                onFavorite={(obj) => addToFavorites(obj)}
+                onPlus={(obj) => addToCart(obj)}
+                loading={isLoading}
+                {...item}
+            />
+        ));
+    };
     return (
         <div className="content p-40">
             <div className="d-flex justify-between align-center mb-40">
@@ -11,18 +36,7 @@ export function Home({ items, searchValue, setSearchValue, onChangeInput, addToF
                     <input onChange={onChangeInput} value={searchValue} placeholder="Поиск..." type="text" />
                 </div>
             </div>
-            <div className="sneakers d-flex justify-center flex-wrap">
-                {items
-                    .filter((item) => item.name.toLowerCase().includes(searchValue))
-                    .map((item, index) => (
-                        <Card
-                            key={index}
-                            onFavorite={(obj) => addToFavorites(obj)}
-                            onPlus={(obj) => addToCart(obj)}
-                            {...item}
-                        />
-                    ))}
-            </div>
+            <div className="sneakers d-flex justify-center flex-wrap">{renderItems()}</div>
         </div>
     )
 }
