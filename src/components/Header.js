@@ -1,6 +1,11 @@
+import React from "react"
 import { Link } from "react-router-dom"
+import { useCart } from "../hooks/useCart"
 
 export const Header = (props) => {
+    const { totalPrice } = useCart()
+
+
     return (
         <header className="d-flex justify-between align-center p-40">
             <Link to={"/"}>
@@ -15,7 +20,7 @@ export const Header = (props) => {
             <ul className="headerRight d-flex">
                 <li className="mr-30" onClick={props.cartMove}>
                     <img width={18} height={18} src="/images/cart.svg" alt="cart" />
-                    <span>1205 руб.</span>
+                    <span>{totalPrice} руб.</span>
                 </li>
                 <li>
                     <Link to={"/favorites"}>
@@ -23,7 +28,9 @@ export const Header = (props) => {
                     </Link>
                 </li>
                 <li>
-                    <img width={18} height={18} src="/images/user.svg" alt="user" />
+                    <Link to={"/orders"}>
+                        <img width={18} height={18} src="/images/user.svg" alt="user" />
+                    </Link>
                 </li>
             </ul>
         </header>

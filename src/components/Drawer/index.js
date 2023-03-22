@@ -1,12 +1,16 @@
 import React from "react"
-import Info from "./Info"
-import AppContext from "../context"
 import axios from "axios"
+
+import { Info } from "../Info"
+import { useCart } from "../../hooks/useCart"
+
+import styles from "./Drawer.module.scss"
+
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const Drawer = ({ cartMove, removeItem, items = [] }) => {
-    const { cartItems, setCartItems } = React.useContext(AppContext)
+export const Drawer = ({ cartMove, removeItem, items = [], opened }) => {
+    const { cartItems, setCartItems, totalPrice } = useCart()
     const [orderId, setOrderId] = React.useState(null)
     const [isOrderComplete, setIsOrderComplete] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -35,13 +39,13 @@ export const Drawer = ({ cartMove, removeItem, items = [] }) => {
 
 
     return (
-        <div className="overlay">
-            <div className="drawer">
+        <div className={`${styles.overlay} ${opened ? styles.overlayVisible : ''}`}>
+            <div className={styles.drawer}>
                 <h2 className="mb-30 d-flex justify-between">Корзина <img onClick={cartMove} className="cu-p" src="/images/btn-remove.svg" alt="" /></h2>
 
                 {items.length > 0 ? (
                     <div className="flex d-flex flex-column">
-                        <div className="items">
+                        <div className="items flex">
                             {items.map((obj) => (
                                 <div key={obj.id} className="cartItem d-flex align-center mb-20">
                                     <div style={{ backgroundImage: `url(${obj.image})` }} className="cartItemImg"></div>
@@ -58,12 +62,12 @@ export const Drawer = ({ cartMove, removeItem, items = [] }) => {
                                 <li>
                                     <span>Итого:</span>
                                     <div></div>
-                                    <b>21 498 руб. </b>
+                                    <b>{totalPrice} руб. </b>
                                 </li>
                                 <li>
                                     <span>Налог 5%:</span>
                                     <div></div>
-                                    <b>1074 руб. </b>
+                                    <b>{(totalPrice / 100 * 5).toFixed(2)} руб. </b>
                                 </li>
                             </ul>
                             <button disabled={isLoading} onClick={onClickOrder} className="greenButton">Оформить заказ <img src="/images/arrow.svg" alt="" /></button>
